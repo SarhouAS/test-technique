@@ -95,3 +95,116 @@ INSERT INTO users (id, email, name, role) VALUES
 ('u1234567-1234-5678-1234-567812345678', 'client@example.com', 'Client Test', 'user')
 ON CONFLICT (id) DO NOTHING;
 \`\`\`
+
+## 2. Backend API (Vercel Functions)
+
+### 2.1. Copie des Fichiers
+
+Copiez les fichiers suivants dans votre projet Vercel :
+
+\`\`\`bash
+# Configuration et dépendances
+cp backend/package.json /path/to/vercel/project/
+cp backend/tsconfig.json /path/to/vercel/project/
+cp backend/vercel.json /path/to/vercel/project/
+
+# Utilitaires
+cp backend/lib/auth.ts /path/to/vercel/project/lib/
+cp backend/lib/db.ts /path/to/vercel/project/lib/
+cp backend/lib/types.ts /path/to/vercel/project/lib/
+
+# Endpoints API
+cp backend/api/v1/draws/index.ts /path/to/vercel/project/api/v1/draws/
+cp backend/api/v1/draws/[id].ts /path/to/vercel/project/api/v1/draws/
+cp backend/api/v1/draws/[id]/participants.ts /path/to/vercel/project/api/v1/draws/[id]/
+cp backend/api/v1/draws/[id]/participate.ts /path/to/vercel/project/api/v1/draws/[id]/
+\`\`\`
+
+### 2.2. Variables d'Environnement
+
+Configurez les variables d'environnement dans Vercel :
+
+- `DATABASE_URL` : URL de connexion à votre base de données Supabase.
+- `JWT_SECRET` ou `SUPABASE_SERVICE_KEY` : Clé secrète pour la vérification des tokens JWT.
+
+## 3. Restaurant Dashboard (React Native Expo)
+
+### 3.1. Copie des Fichiers
+
+Copiez les fichiers suivants dans votre projet Expo :
+
+\`\`\`bash
+# Configuration et dépendances
+cp restaurant-dashboard/package.json /path/to/expo/project/
+cp restaurant-dashboard/app.json /path/to/expo/project/
+
+# Services
+cp restaurant-dashboard/services/drawsApi.ts /path/to/expo/project/services/
+
+# Écrans
+cp restaurant-dashboard/screens/DrawsScreen.tsx /path/to/expo/project/screens/
+cp restaurant-dashboard/screens/CreateDrawScreen.tsx /path/to/expo/project/screens/
+cp restaurant-dashboard/screens/DrawDetailsScreen.tsx /path/to/expo/project/screens/
+\`\`\`
+
+### 3.2. Modification de App.tsx (Navigation)
+
+Ajoutez les écrans de navigation dans votre `App.tsx` (ou le fichier de navigation principal) :
+
+\`\`\`typescript
+// Exemple de configuration de navigation (Stack Navigator)
+<Stack.Navigator>
+  <Stack.Screen name="Draws" component={DrawsScreen} options={{ title: 'Mes Tirages' }} />
+  <Stack.Screen name="CreateDraw" component={CreateDrawScreen} options={{ title: 'Nouveau Tirage' }} />
+  <Stack.Screen name="DrawDetails" component={DrawDetailsScreen} options={{ title: 'Détails du Tirage' }} />
+</Stack.Navigator>
+\`\`\`
+
+## 4. Mobile App (React Native Expo)
+
+### 4.1. Copie des Fichiers
+
+Copiez les fichiers suivants dans votre projet Expo :
+
+\`\`\`bash
+# Configuration et dépendances
+cp mobile-app/package.json /path/to/expo/mobile/project/
+cp mobile-app/app.json /path/to/expo/mobile/project/
+
+# Services
+cp mobile-app/services/drawsApi.ts /path/to/expo/mobile/project/services/
+
+# Écrans
+cp mobile-app/screens/DrawDetailScreen.tsx /path/to/expo/mobile/project/screens/
+\`\`\`
+
+### 4.2. Modification de App.tsx (Navigation)
+
+Ajoutez l'écran de navigation dans votre `App.tsx` (ou le fichier de navigation principal) :
+
+\`\`\`typescript
+// Exemple de configuration de navigation (Stack Navigator)
+<Stack.Navigator>
+  <Stack.Screen name="DrawDetail" component={DrawDetailScreen} options={{ title: 'Détail du Tirage' }} />
+</Stack.Navigator>
+\`\`\`
+
+## 5. Étapes de Test
+
+1. **Test Restaurateur (Dashboard)** :
+   - Authentifiez-vous en tant que restaurateur (ID: `r1234567-1234-5678-1234-567812345678`).
+   - Créez un nouveau tirage via `CreateDrawScreen`.
+   - Vérifiez que le tirage apparaît dans `DrawsScreen` (onglet Actifs).
+   - Tentez de modifier/supprimer le tirage via `DrawDetailsScreen` (doit fonctionner car 0 participant).
+
+2. **Test Client (Mobile App)** :
+   - Authentifiez-vous en tant que client (ID: `u1234567-1234-5678-1234-567812345678`).
+   - Accédez au tirage créé via `DrawDetailScreen`.
+   - Participez au tirage via le bouton "Je participe" (doit fonctionner).
+   - Tentez de participer une seconde fois (doit retourner une erreur 409 `ALREADY_PARTICIPATED`).
+
+3. **Vérification Sécurité (Dashboard)** :
+   - Revenez au `DrawDetailsScreen` du restaurateur.
+   - Vérifiez que le nombre de participants est mis à jour (1 participant).
+   - Tentez de modifier/supprimer le tirage (doit échouer avec une erreur 400).
+   - Vérifiez que la liste des participants est visible.
