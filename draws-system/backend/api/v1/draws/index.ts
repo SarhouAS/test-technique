@@ -13,7 +13,7 @@ import { Draw, ApiResponse } from '../../../lib/types.js';
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse
-): Promise<void> {
+): Promise<any> {
   // Vérifier la méthode HTTP
   if (req.method === 'GET') {
     return handleGet(req, res);
@@ -24,7 +24,7 @@ export default async function handler(
   }
 }
 
-async function handleGet(req: VercelRequest, res: VercelResponse): Promise<void> {
+async function handleGet(req: VercelRequest, res: VercelResponse): Promise<any> {
   try {
     // Authentifier l'utilisateur
     const user = await authenticate(req);
@@ -88,7 +88,7 @@ async function handleGet(req: VercelRequest, res: VercelResponse): Promise<void>
   }
 }
 
-async function handlePost(req: VercelRequest, res: VercelResponse): Promise<void> {
+async function handlePost(req: VercelRequest, res: VercelResponse): Promise<any> {
   try {
     // Authentifier l'utilisateur
     const user = await authenticate(req);

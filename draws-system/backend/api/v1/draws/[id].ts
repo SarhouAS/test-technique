@@ -18,7 +18,7 @@ interface DrawDetail {
 export default async function handler(
   req: VercelRequest,
   res: VercelResponse
-): Promise<void> {
+): Promise<any> {
   const { id } = req.query;
 
   if (!id || typeof id !== 'string') {
@@ -36,7 +36,7 @@ export default async function handler(
   }
 }
 
-async function handleGet(id: string, req: VercelRequest, res: VercelResponse): Promise<void> {
+async function handleGet(id: string, req: VercelRequest, res: VercelResponse): Promise<any> {
   try {
     // Récupérer le tirage
     const drawResult = await query('SELECT * FROM draws WHERE id = $1', [id]);
@@ -101,7 +101,7 @@ async function handleGet(id: string, req: VercelRequest, res: VercelResponse): P
   }
 }
 
-async function handlePatch(id: string, req: VercelRequest, res: VercelResponse): Promise<void> {
+async function handlePatch(id: string, req: VercelRequest, res: VercelResponse): Promise<any> {
   try {
     // Authentifier l'utilisateur
     const user = await authenticate(req);
@@ -260,7 +260,7 @@ async function handlePatch(id: string, req: VercelRequest, res: VercelResponse):
   }
 }
 
-async function handleDelete(id: string, req: VercelRequest, res: VercelResponse): Promise<void> {
+async function handleDelete(id: string, req: VercelRequest, res: VercelResponse): Promise<any> {
   try {
     // Authentifier l'utilisateur
     const user = await authenticate(req);
