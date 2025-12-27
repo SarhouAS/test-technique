@@ -1,0 +1,24 @@
+{
+  "name": "draws-system-backend",
+  "version": "1.0.0",
+  "description": "Backend API pour le système de tirages au sort",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "node --loader ts-node/esm --no-warnings=ExperimentalWarning api/index.ts",
+    "build": "tsc",
+    "start": "node dist/api/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "pg": "^8.16.3",
+    "jsonwebtoken": "^9.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.6",
+    "@types/pg": "^8.11.3",
+    "@types/jsonwebtoken": "^9.0.7",
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2"
+  }
+}
