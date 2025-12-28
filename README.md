@@ -1,8 +1,5 @@
 # 🎲 Système de Tirages au Sort – Test Technique
 
-Ce projet a été réalisé dans le cadre d’un **test technique pour un stage / une alternance**.  
-Il implémente un système complet de **tirages au sort pour restaurants**, avec une gestion côté restaurateur et une participation côté client.
-
 L’objectif principal était de respecter une **stack technique imposée**, de concevoir une **base de données cohérente**, et d’implémenter une **logique métier sécurisée**.
 
 ---
