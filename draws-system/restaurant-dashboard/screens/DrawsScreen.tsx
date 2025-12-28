@@ -11,6 +11,16 @@ import {
   Image,
 } from 'react-native';
 import { getDrawsApi } from '../services/drawsApi';
+import { StackScreenProps } from '@react-navigation/stack';
+
+// Définition des types pour la navigation
+type RestaurantDashboardStackParamList = {
+  Draws: undefined;
+  DrawDetails: { drawId: string };
+  CreateDraw: undefined;
+};
+
+type DrawsScreenProps = StackScreenProps<RestaurantDashboardStackParamList, 'Draws'>;
 
 interface Draw {
   id: string;
@@ -19,10 +29,6 @@ interface Draw {
   participant_count: number;
   draw_date?: string;
   created_at: string;
-}
-
-interface DrawsScreenProps {
-  navigation: any;
 }
 
 export const DrawsScreen: React.FC<DrawsScreenProps> = ({ navigation }) => {
@@ -59,13 +65,13 @@ export const DrawsScreen: React.FC<DrawsScreenProps> = ({ navigation }) => {
 
   // Rendu d'une carte de tirage
   const renderDrawCard = ({ item }: { item: Draw }) => {
-    const statusColors = {
+    const statusColors: Record<Draw['status'], string> = {
       active: '#10B981',
       completed: '#6B7280',
       cancelled: '#EF4444',
     };
 
-    const statusLabels = {
+    const statusLabels: Record<Draw['status'], string> = {
       active: 'Actif',
       completed: 'Terminé',
       cancelled: 'Annulé',

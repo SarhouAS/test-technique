@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, AxiosError } from 'axios';
 
 export interface Draw {
   id: string;
@@ -13,14 +13,17 @@ export interface Draw {
   created_at: string;
 }
 
-export interface DrawDetail {
+export interface Business {
+  id: string;
+  name: string;
+  email?: string;
+  city?: string;
+}
+
+// Interface pour la réponse complète de GET /draws/:id
+export interface DrawDetailResponse {
   draw: Draw;
-  business: {
-    id: string;
-    name: string;
-    email?: string;
-    city?: string;
-  };
+  business: Business;
   participant_count: number;
   user_has_participated: boolean;
 }
@@ -54,7 +57,7 @@ export class MobileDrawsApiService {
   /**
    * Récupère les détails d'un tirage.
    */
-  async getDrawDetail(drawId: string): Promise<DrawDetail> {
+  async getDrawDetail(drawId: string): Promise<DrawDetailResponse> {
     try {
       const response = await this.client.get(`/draws/${drawId}`);
       return response.data.data;
@@ -80,19 +83,21 @@ export class MobileDrawsApiService {
   /**
    * Gère les erreurs d'API.
    */
-  private handleError(error: any): Error {
-    if (error.response) {
-      const message = error.response.data?.error || 'API Error';
-      const code = error.response.data?.code;
-      const err = new Error(message);
-      (err as any).code = code;
-      (err as any).status = error.response.status;
-      return err;
-    } else if (error.request) {
-      return new Error('Network error');
-    } else {
-      return new Error(error.message || 'Unknown error');
+  private handleError(error: unknown): Error {
+    if (axios.isAxiosError(error)) {
+      const axiosError = error as AxiosError;
+      if (axiosError.response) {
+        const message = (axiosError.response.data as any)?.error || 'API Error';
+        const code = (axiosError.response.data as any)?.code;
+        const err = new Error(message);
+        (err as any).code = code;
+        (err as any).status = axiosError.response.status;
+        return err;
+      } else if (axiosError.request) {
+        return new Error('Network error');
+      }
     }
+    return new Error((error as Error)?.message || 'Unknown error');
   }
 }
 
@@ -106,7 +111,11 @@ export function initializeMobileDrawsApi(baseURL: string): MobileDrawsApiService
 
 export function getMobileDrawsApi(): MobileDrawsApiService {
   if (!apiService) {
-    throw new Error('MobileDrawsApi not initialized. Call initializeMobileDrawsApi first.');
+    // Dans un vrai projet Expo, l'initialisation se ferait au démarrage de l'application.
+    // Pour ce test, nous allons simuler une initialisation si elle n'a pas eu lieu.
+    // NOTE: Le baseURL devrait être récupéré via Expo constants ou .env
+    console.warn("MobileDrawsApi not initialized. Using placeholder URL.");
+    initializeMobileDrawsApi('http://localhost:3001/api/v1');
   }
-  return apiService;
+  return apiService!;
 }

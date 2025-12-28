@@ -10,12 +10,17 @@ import {
   Image,
   FlatList,
 } from 'react-native';
-import { getDrawsApi } from '../services/drawsApi';
+import { getDrawsApi, DrawDetailResponse } from '../services/drawsApi';
+import { StackScreenProps } from '@react-navigation/stack';
 
-interface DrawDetailsScreenProps {
-  navigation: any;
-  route: any;
-}
+// Définition des types pour la navigation
+type RestaurantDashboardStackParamList = {
+  Draws: undefined;
+  DrawDetails: { drawId: string };
+  CreateDraw: { drawId: string };
+};
+
+type DrawDetailsScreenProps = StackScreenProps<RestaurantDashboardStackParamList, 'DrawDetails'>;
 
 interface Participant {
   id: string;
@@ -26,7 +31,7 @@ interface Participant {
 
 export const DrawDetailsScreen: React.FC<DrawDetailsScreenProps> = ({ navigation, route }) => {
   const { drawId } = route.params;
-  const [draw, setDraw] = useState<any>(null);
+  const [drawDetail, setDrawDetail] = useState<DrawDetailResponse | null>(null);
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [loading, setLoading] = useState(true);
   const [participantLoading, setParticipantLoading] = useState(false);
@@ -42,7 +47,7 @@ export const DrawDetailsScreen: React.FC<DrawDetailsScreenProps> = ({ navigation
       setLoading(true);
       const api = getDrawsApi();
       const detail = await api.getDrawDetail(drawId);
-      setDraw(detail);
+      setDrawDetail(detail);
 
       // Charger les participants
       if (detail.participant_count > 0) {
@@ -112,7 +117,7 @@ export const DrawDetailsScreen: React.FC<DrawDetailsScreenProps> = ({ navigation
     );
   }
 
-  if (!draw) {
+  if (!drawDetail) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>Tirage non trouvé</Text>
@@ -120,19 +125,21 @@ export const DrawDetailsScreen: React.FC<DrawDetailsScreenProps> = ({ navigation
     );
   }
 
-  const statusColors = {
+  const { draw, business, participant_count } = drawDetail;
+
+  const statusColors: Record<typeof draw.status, string> = {
     active: '#10B981',
     completed: '#6B7280',
     cancelled: '#EF4444',
   };
 
-  const statusLabels = {
+  const statusLabels: Record<typeof draw.status, string> = {
     active: 'Actif',
     completed: 'Terminé',
     cancelled: 'Annulé',
   };
 
-  const canModify = draw.participant_count === 0;
+  const canModify = participant_count === 0;
 
   return (
     <ScrollView style={styles.container}>
@@ -170,7 +177,7 @@ export const DrawDetailsScreen: React.FC<DrawDetailsScreenProps> = ({ navigation
         {/* Statistiques */}
         <View style={styles.statsContainer}>
           <View style={styles.statBox}>
-            <Text style={styles.statNumber}>{draw.participant_count}</Text>
+            <Text style={styles.statNumber}>{participant_count}</Text>
             <Text style={styles.statLabel}>Participants</Text>
           </View>
 
@@ -217,7 +224,7 @@ export const DrawDetailsScreen: React.FC<DrawDetailsScreenProps> = ({ navigation
         </View>
 
         {/* Liste des participants */}
-        {draw.participant_count > 0 && (
+        {participant_count > 0 && (
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>Participants ({totalParticipants})</Text>
             <FlatList

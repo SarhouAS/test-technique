@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -11,13 +11,18 @@ import {
   Switch,
 } from 'react-native';
 import { getDrawsApi } from '../services/drawsApi';
+import { StackScreenProps } from '@react-navigation/stack';
 
-interface CreateDrawScreenProps {
-  navigation: any;
-  route?: any;
-}
+// Définition des types pour la navigation
+type RestaurantDashboardStackParamList = {
+  Draws: undefined;
+  DrawDetails: { drawId: string };
+  CreateDraw: undefined;
+};
 
-export const CreateDrawScreen: React.FC<CreateDrawScreenProps> = ({ navigation, route }) => {
+type CreateDrawScreenProps = StackScreenProps<RestaurantDashboardStackParamList, 'CreateDraw'>;
+
+export const CreateDrawScreen: React.FC<CreateDrawScreenProps> = ({ navigation }) => {
   const [prizeName, setPrizeName] = useState('');
   const [prizeDescription, setPrizeDescription] = useState('');
   const [drawType, setDrawType] = useState<'fixed_date' | 'conditional'>('fixed_date');
@@ -46,8 +51,8 @@ export const CreateDrawScreen: React.FC<CreateDrawScreenProps> = ({ navigation, 
 
     if (drawType === 'conditional') {
       const threshold = parseInt(triggerThreshold, 10);
-      if (!triggerThreshold || threshold <= 0) {
-        newErrors.triggerThreshold = 'Le seuil doit être supérieur à 0';
+      if (!triggerThreshold || isNaN(threshold) || threshold <= 0) {
+        newErrors.triggerThreshold = 'Le seuil doit être un nombre supérieur à 0';
       }
     }
 

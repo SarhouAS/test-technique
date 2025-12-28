@@ -9,18 +9,22 @@ import {
   Alert,
   Image,
   Modal,
-  CheckBox,
+  Platform,
 } from 'react-native';
-import { getMobileDrawsApi, DrawDetail } from '../services/drawsApi';
+import CheckBox from 'expo-checkbox'; // Utilisation de expo-checkbox pour la compatibilité
+import { getMobileDrawsApi, DrawDetailResponse } from '../services/drawsApi';
+import { StackScreenProps } from '@react-navigation/stack';
 
-interface DrawDetailScreenProps {
-  navigation: any;
-  route: any;
-}
+// Définition des types pour la navigation
+type MobileAppStackParamList = {
+  DrawDetail: { drawId: string };
+};
+
+type DrawDetailScreenProps = StackScreenProps<MobileAppStackParamList, 'DrawDetail'>;
 
 export const DrawDetailScreen: React.FC<DrawDetailScreenProps> = ({ navigation, route }) => {
   const { drawId } = route.params;
-  const [drawDetail, setDrawDetail] = useState<DrawDetail | null>(null);
+  const [drawDetail, setDrawDetail] = useState<DrawDetailResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [participating, setParticipating] = useState(false);
   const [showModal, setShowModal] = useState(false);
